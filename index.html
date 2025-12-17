@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <title>Tres Pistas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chango&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. DEFINICIÓN DE VARIABLES DE COLOR */
+        :root {
+            --color-acento: #1ec8c5;
+            /* Turquesa vibrante */
+            --color-fondo: #0f172a;
+            /* Un azul pizarra muy oscuro (slate-900) */
+            --color-tarjeta: #1e293b;
+            /* Un tono más claro para las tarjetas (slate-800) */
+            --color-texto-claro: #f8fafc;
+            /* Blanco azulado muy limpio */
+            --color-texto-gris: #94a3b8;
+            /* Gris suave para descripciones */
+            --color-borde: #334155;
+            /* Bordes sutiles */
+        }
+
+        /* 2. APLICACIÓN DE VARIABLES A LOS ESTILOS GLOBALMENTE */
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            background-color: var(--color-fondo);
+            /* Usando variable */
+            color: var(--color-texto-claro);
+            /* Usando variable */
+        }
+
+        /* Para usar una fuente monoespaciada en títulos específicos */
+        .font-code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .font-impostor {
+            font-family: 'Luckiest Guy', cursive;
+            line-height: 1;
+        }
+
+        /* Sobrescribir las clases de Tailwind con las variables (para el color de acento) */
+        .text-acento {
+            color: var(--color-acento);
+        }
+
+        .hover-acento:hover {
+            color: var(--color-acento) !important;
+        }
+
+        .border-acento:hover {
+            border-color: var(--color-acento) !important;
+        }
+
+        .bg-tarjeta {
+            background-color: var(--color-tarjeta);
+        }
+
+        .border-tarjeta {
+            border-color: var(--color-borde);
+        }
+
+        .text-texto-gris {
+            color: var(--color-texto-gris);
+        }
+
+        .logo-glow {
+            filter: drop-shadow(0 0 8px var(--color-acento));
+        }
+    </style>
+</head>
+
+<body class="min-h-screen antialiased">
+    <header class="bg-gray-900 shadow-md p-4 border-b border-gray-800 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center py-0">
+            <div class="flex items-center space-x-2">
+                <img src="img/favicon.png" alt="Icono Tres Pistas" class="h-8 w-8">
+                <h1 class="text-3xl font-extrabold text-acento font-impostor">
+                    Tres Pistas
+                </h1>
+            </div>
+
+            <button id="reset-game-btn"
+                class="py-2 px-4 bg-gray-700 hover:bg-gray-600 text-red-400 font-bold rounded-lg transition duration-150 items-center justify-center text-base disabled:opacity-50 hidden"
+                title="Acabar Partida">
+                🛑 Salir
+            </button>
+        </div>
+    </header>
+    <div id="start-buttons">
+        <div class="py-8 md:py-12">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-4">
+                    Bienvenido a <span class="font-impostor text-acento">
+                        Tres Pistas
+                    </span>
+                </h1>
+                <p class="text-xl text-texto-gris mb-12 max-w-2xl mx-auto">
+                    Selecciona el número de impostores, y añade los jugadores.
+                </p>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                    <div
+                        class="bg-tarjeta p-6 rounded-lg shadow-xl border border-gray-700 border-acento hover-acento transition duration-300 h-full flex flex-col justify-between">
+                        <div>
+                            <span class="text-acento text-4xl mb-3 block">⚙️</span>
+                            <h3 class="text-2xl font-bold mb-2 text-gray-100 font-code">Opciones</h3>
+                            <p class="text-texto-gris text-base">
+                            <div class="flex flex-col space-y-2 mb-4">
+
+                                <select id="time-select"
+                                    class="w-full p-3 bg-gray-700 border border-acento text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-acento transition duration-150">
+                                    <option value="20" selected>20 Segundos</option>
+                                    <option value="30">30 Segundos</option>
+                                    <option value="40">40 Segundos</option>
+                                </select>
+                                <select id="num-card-select"
+                                    class="w-full p-3 bg-gray-700 border border-acento text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-acento transition duration-150">
+                                    <option value="10" selected>10 Cartas</option>
+                                    <option value="40">40 Cartas</option>
+                                    <option value="60">60 Cartas</option>
+                                </select>
+                                <button id="start-btn"
+                                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-150">
+                                    Empezar
+                                </button>
+                            </div>
+                            </p>
+                        </div>
+                        <a href="#" target="_blank" class="block">
+                            <span class="mt-5 inline-block text-sm font-medium text-acento hover:underline">Ver
+                                Instrucciones →</span></a>
+                    </div>
+
+                    <!--
+                    <div
+                        class="bg-tarjeta p-6 rounded-lg shadow-xl border border-gray-700 border-acento hover-acento transition duration-300 h-full flex flex-col justify-between">
+                        <div>
+                            <span class="text-acento text-4xl mb-3 block">📝</span>
+                            <h3 class="text-2xl font-bold mb-2 text-gray-100 font-code">Registro</h3>
+                            <p class="text-texto-gris text-base">
+                            <div class="flex flex-col space-y-2 mb-4">
+                                <label for="new-player-name" class="text-texto-gris">Añadir Jugadores (mínimo
+                                    3):</label>
+                                <div class="flex space-x-2">
+                                    <input type="text" id="new-player-name" placeholder="Introduce nombre (máx. 15)"
+                                        class="flex-1 p-3 bg-gray-700 border border-acento text-white rounded-lg focus:outline-none placeholder-gray-400"
+                                        maxlength="15"> <button id="add-player-btn"
+                                        class="shrink-0 bg-[--color-acento] text-white font-bold p-3 rounded-lg transition duration-150">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-tarjeta p-6 rounded-lg shadow-xl border border-gray-700 border-acento hover-acento transition duration-300 h-full flex flex-col justify-between">
+                        <div>
+                            <span class="text-acento text-4xl mb-3 block">👥</span>
+                            <h3 class="text-2xl font-bold mb-2 text-gray-100 font-code">Lista de Sospechosos</h3>
+                            <p class="text-texto-gris text-base">
+                            <div class="flex flex-col space-y-2 mb-4">
+
+                                <div id="players-list-container"
+                                    class="mt-4 p-3 bg-gray-800 border border-gray-700 rounded-lg min-h-[50px] max-h-[250px] overflow-y-auto">
+                                    <p id="empty-list-message" class="text-texto-gris italic text-sm">Aún no hay
+                                        jugadores añadidos.</p>
+                                    <ul id="players-list" class="space-y-2">
+                                    </ul>
+                                </div>
+
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+
+        <div id="game-layout" class="flex flex-col lg:flex-row lg:space-x-8 ">
+
+            <div id="control-bar-wrapper"
+                class="flex flex-col sm:flex-row lg:flex-col justify-between items-center w-full lg:w-64 mb-6 lg:mb-0">
+                <div id="game-stats" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-1 gap-3 w-full hidden">
+
+                    <div id="team1-score"
+                        class="flex flex-col border-2 border-blue-600 rounded-xl bg-tarjeta overflow-hidden">
+                        <div class="bg-blue-600 text-white text-[10px] font-bold py-1 text-center uppercase">🔵 Equipo
+                            Azul</div>
+                        <div class="grid grid-cols-3 text-center border-b border-gray-700">
+                            <div class="p-1 border-r border-gray-700">
+                                <span class="block text-[8px] text-texto-gris uppercase">R1</span>
+                                <span id="t1-r1" class="font-bold text-sm text-white">0</span>
+                            </div>
+                            <div class="p-1 border-r border-gray-700">
+                                <span class="block text-[8px] text-texto-gris uppercase">R2</span>
+                                <span id="t1-r2" class="font-bold text-sm text-white">0</span>
+                            </div>
+                            <div class="p-1">
+                                <span class="block text-[8px] text-texto-gris uppercase">R3</span>
+                                <span id="t1-r3" class="font-bold text-sm text-white">0</span>
+                            </div>
+                        </div>
+                        <div class="p-1 text-center bg-blue-900/20">
+                            <span class="text-[9px] uppercase text-blue-400">Total:</span>
+                            <span id="t1-total" class="font-bold text-xl text-blue-400 ml-1">0</span>
+                        </div>
+                    </div>
+
+                    <div id="team2-score"
+                        class="flex flex-col border-2 border-red-600 rounded-xl bg-tarjeta overflow-hidden mt-2">
+                        <div class="bg-red-600 text-white text-[10px] font-bold py-1 text-center uppercase">🔴 Equipo
+                            Rojo</div>
+                        <div class="grid grid-cols-3 text-center border-b border-gray-700">
+                            <div class="p-1 border-r border-gray-700">
+                                <span class="block text-[8px] text-texto-gris uppercase">R1</span>
+                                <span id="t2-r1" class="font-bold text-sm text-white">0</span>
+                            </div>
+                            <div class="p-1 border-r border-gray-700">
+                                <span class="block text-[8px] text-texto-gris uppercase">R2</span>
+                                <span id="t2-r2" class="font-bold text-sm text-white">0</span>
+                            </div>
+                            <div class="p-1">
+                                <span class="block text-[8px] text-texto-gris uppercase">R3</span>
+                                <span id="t2-r3" class="font-bold text-sm text-white">0</span>
+                            </div>
+                        </div>
+                        <div class="p-1 text-center bg-red-900/20">
+                            <span class="text-[9px] uppercase text-red-400">Total:</span>
+                            <span id="t2-total" class="font-bold text-xl text-red-400 ml-1">0</span>
+                        </div>
+                    </div>
+
+                    <div id="timer-container"
+                        class="flex flex-col justify-center items-center text-acento border-2 border-acento p-2 rounded-xl bg-tarjeta h-24 logo-glow">
+                        <span class="text-[10px] uppercase font-bold tracking-wider">⏱️ Tiempo</span>
+                        <span id="timer" class="font-bold text-3xl">-</span>
+                    </div>
+
+                    <div id="turn-container"
+                        class="flex flex-col justify-center items-center text-white border-2 border-gray-600 p-2 rounded-xl bg-tarjeta h-24">
+                        <span class="text-[10px] uppercase font-bold tracking-wider">👤 Turno</span>
+                        <span id="current-turn"
+                            class="font-bold text-xs leading-tight mt-1 text-acento text-center uppercase">Preparados</span>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div id="game-board"
+                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 w-full lg:flex-1">
+            </div>
+        </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-800 mt-16 py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+
+                <p class="text-xs text-texto-gris mb-4 md:mb-0">
+                    &copy; <span id="currentYearFooter"></span> <span class="font-code">
+                        <span class="-mr-1 inline-block">Da_CaRo</span> Labs
+                    </span> Desarrollado con pasión.
+                </p>
+                <div class="flex space-x-6 items-center">
+                    <a href="https://github.com/da-caro" target="_blank"
+                        class="text-texto-gris hover-acento transition duration-300 text-sm">
+                        GitHub
+                    </a>
+                    <button id="clear-storage-btn" class="text-texto-gris hover-acento transition duration-300 text-sm">
+                        Borrar Variables
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script type="module">
+        document.getElementById('currentYearFooter').textContent = new Date().getFullYear();
+
+        // 1. BANCO DE PALABRAS AMPLIADO
+        const BANCO_PALABRAS = [
+            "Messi", "Iron Man", "Pizza", "Eiffel", "Titanic", "Batman", "Shakira",
+            "Japón", "Internet", "Harry Potter", "Dinosaurio", "Minecraft", "Star Wars",
+            "WhatsApp", "Facebook", "España", "Don Quijote", "Mickey Mouse", "Einstein",
+            "Beyoncé", "Pikachu", "Netflix", "Google", "Amazon", "Mónaco", "Sherlock",
+            "Maradona", "Cleopatra", "Dalí", "Elvis Presley", "Spiderman", "Grecia",
+            "Canguro", "Sándwich", "Pirámide", "Bombilla", "Guitarra", "Marte"
+        ];
+
+        // 2. ESTADO DEL JUEGO MEJORADO
+        let gameState = {
+            mazoTotal: [],
+            palabrasRestantes: [],
+            tiempoConfigurado: 20,
+            tiempoRestante: 0,
+            rondaActual: 1,
+            indiceActual: 0,
+            indiceInicialSalto: -1,
+            puntosTurno: 0,
+            puntos: 0,
+            intervalo: null,
+            puntos: {
+                equipo1: { r1: 0, r2: 0, r3: 0, total: 0 },
+                equipo2: { r1: 0, r2: 0, r3: 0, total: 0 }
+            },
+            equipoActual: 1, // 1 para Azules, 2 para Rojos
+            puntosTurno: 0,   // Puntos conseguidos solo en este turno (para el resumen)
+            palabraInicialTurno: null,
+            palabraReferenciaSalto: null,
+        };
+
+        // 3. ELEMENTOS DEL DOM
+        const btnEmpezar = document.getElementById('start-btn');
+        const startSection = document.getElementById('start-buttons');
+        const gameLayout = document.getElementById('game-layout');
+        const gameBoard = document.getElementById('game-board');
+        const resetBtn = document.getElementById('reset-game-btn');
+        const gameStats = document.getElementById('game-stats');
+        const currentTurn = document.getElementById('current-turn');
+
+        // 4. UTILIDADES
+        function barajar(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // 5. INICIAR PARTIDA
+        function iniciarPartida() {
+            const numCartas = parseInt(document.getElementById('num-card-select').value);
+            gameState.tiempoConfigurado = parseInt(document.getElementById('time-select').value);
+
+            // Seleccionamos y barajamos SOLO AQUÍ para la primera ronda
+            const seleccionadas = barajar([...BANCO_PALABRAS]).slice(0, numCartas);
+            gameState.mazoTotal = [...seleccionadas];
+            gameState.palabrasRestantes = [...seleccionadas]; // Ya vienen barajadas
+
+            gameState.rondaActual = 1;
+            gameState.puntosTurno = 0;
+            gameState.equipoActual = 1;
+
+            // Mostrar el panel lateral
+            startSection.classList.add('hidden');
+            gameLayout.classList.remove('hidden');
+            resetBtn.classList.remove('hidden');
+            document.getElementById('game-stats').classList.remove('hidden'); // Mostramos marcadores, timer y turno
+
+            // Reset visual de todos los numeritos
+            ['t1', 't2'].forEach(team => {
+                ['r1', 'r2', 'r3', 'total'].forEach(score => {
+                    const el = document.getElementById(`${team}-${score}`);
+                    if (el) el.textContent = '0';
+                });
+            });
+
+            // Reset lógico
+            gameState.puntos = {
+                equipo1: { r1: 0, r2: 0, r3: 0, total: 0 },
+                equipo2: { r1: 0, r2: 0, r3: 0, total: 0 }
+            };
+
+            prepararTablero();
+        }
+
+        // 6. PANTALLA DE PREPARACIÓN
+        function prepararTablero() {
+            clearInterval(gameState.intervalo);
+
+            // Actualizar el indicador de turno visualmente antes de empezar
+            const nombreEquipo = gameState.equipoActual === 1 ? "🔵 EQUIPO AZUL" : "🔴 EQUIPO ROJO";
+            const colorEquipo = gameState.equipoActual === 1 ? "text-blue-400" : "text-red-400";
+
+            const turnEl = document.getElementById('current-turn');
+            turnEl.textContent = nombreEquipo;
+            turnEl.className = `font-bold text-xs leading-tight mt-1 text-center uppercase ${colorEquipo}`;
+
+            // Si no quedan palabras, pasamos de ronda
+            if (gameState.palabrasRestantes.length === 0) {
+                gameState.rondaActual++;
+                if (gameState.rondaActual > 3) {
+                    mostrarFinJuego();
+                    return;
+                }
+                gameState.palabrasRestantes = barajar([...gameState.mazoTotal]);
+                gameState.indiceActual = 0; // Solo reseteamos aquí al cambiar de ronda
+            }
+
+            gameBoard.innerHTML = `
+            <div class="col-span-full text-center py-10 bg-tarjeta rounded-3xl border-2 border-dashed border-gray-700">
+                <h2 class="text-4xl font-impostor text-acento mb-2">Ronda ${gameState.rondaActual}</h2>
+                <p class="text-texto-gris mb-8">
+                    ${obtenerInstruccionesRonda()}
+                </p>
+                <div class="mb-8">
+                    <span class="text-sm text-texto-gris">Palabras en el mazo:</span>
+                    <span class="text-2xl font-bold block">${gameState.palabrasRestantes.length}</span>
+                </div>
+                <button id="ready-btn" class="bg-acento text-gray-900 font-extrabold py-4 px-10 rounded-full text-2xl hover:scale-105 transition transform logo-glow">
+                    ¡EMPEZAR TURNO!
+                </button>
+            </div>
+        `;
+
+            document.getElementById('ready-btn').onclick = empezarTurno;
+        }
+
+        function obtenerInstruccionesRonda() {
+            const frases = [
+                "",
+                "¡Descripción libre! Di todo lo que quieras.",
+                "¡Solo una palabra! Elige bien.",
+                "¡Mímica pura! Prohibido hablar."
+            ];
+            return frases[gameState.rondaActual];
+        }
+
+        // 7. EL TURNO ACTIVO
+        function empezarTurno() {
+            gameState.tiempoRestante = gameState.tiempoConfigurado;
+
+            // Al empezar turno, la primera palabra que ve ya cuenta como "vista"
+            gameState.palabrasVistasEsteTurno = [gameState.palabrasRestantes[gameState.indiceActual]];
+
+            console.log(gameState.palabrasRestantes)
+
+            renderizarInterfazTurno();
+
+            gameState.intervalo = setInterval(() => {
+                gameState.tiempoRestante--;
+                const timerEl = document.getElementById('timer');
+                if (timerEl) timerEl.textContent = `${gameState.tiempoRestante}s`;
+                if (gameState.tiempoRestante <= 0) finalizarTurno();
+            }, 1000);
+        }
+
+        function renderizarInterfazTurno() {
+            const palabra = gameState.palabrasRestantes[gameState.indiceActual];
+
+            // Ya NO incluimos el div #timer aquí, solo la carta y botones
+            gameBoard.innerHTML = `
+        <div class="col-span-full flex flex-col items-center">
+            <div class="w-full max-w-sm bg-acento p-1 rounded-2xl shadow-[0_0_20px_rgba(30,200,197,0.3)] mt-4">
+                <div class="bg-gray-900 rounded-xl p-12 text-center">
+                    <span class="text-4xl font-impostor text-white tracking-widest uppercase">
+                        ${palabra}
+                    </span>
+                </div>
+            </div>
+            <div class="flex space-x-4 mt-10">
+                <button id="skip-btn" class="bg-red-500/20 text-red-400 border-2 border-red-500/50 px-8 py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition uppercase text-sm">Saltar</button>
+                <button id="correct-btn" class="bg-green-500 text-gray-900 px-10 py-3 rounded-xl font-bold hover:scale-105 transition shadow-lg shadow-green-500/20 uppercase text-sm">¡Acierto!</button>
+            </div>
+        </div>
+    `;
+
+            document.getElementById('correct-btn').onclick = marcarAcierto;
+            document.getElementById('skip-btn').onclick = saltarPalabra;
+        }
+
+        function marcarAcierto() {
+            gameState.puntosTurno++;
+            const equipoKey = gameState.equipoActual === 1 ? 'equipo1' : 'equipo2';
+            const equipoPrefix = gameState.equipoActual === 1 ? 't1' : 't2';
+            const rondaKey = `r${gameState.rondaActual}`;
+
+            gameState.puntos[equipoKey][rondaKey]++;
+            gameState.puntos[equipoKey].total++;
+            document.getElementById(`${equipoPrefix}-${rondaKey}`).textContent = gameState.puntos[equipoKey][rondaKey];
+            document.getElementById(`${equipoPrefix}-total`).textContent = gameState.puntos[equipoKey].total;
+
+            // Quitamos la palabra acertada
+            gameState.palabrasRestantes.splice(gameState.indiceActual, 1);
+
+            if (gameState.palabrasRestantes.length === 0) {
+                finalizarTurno();
+            } else {
+                if (gameState.indiceActual >= gameState.palabrasRestantes.length) {
+                    gameState.indiceActual = 0;
+                }
+
+                // IMPORTANTE: NO reseteamos la vuelta al mazo.
+                // Simplemente añadimos la nueva palabra que aparece a la lista de "vistas"
+                const nuevaPalabraEnPantalla = gameState.palabrasRestantes[gameState.indiceActual];
+                gameState.palabrasVistasEsteTurno.push(nuevaPalabraEnPantalla);
+
+                renderizarInterfazTurno();
+            }
+        }
+
+        function saltarPalabra() {
+            let siguienteIndice = (gameState.indiceActual + 1) % gameState.palabrasRestantes.length;
+            let proximaPalabra = gameState.palabrasRestantes[siguienteIndice];
+
+            // ¿Esta palabra ya pasó por la pantalla en este turno?
+            if (gameState.palabrasVistasEsteTurno.includes(proximaPalabra)) {
+                // Detenemos antes de mostrarla
+                gameState.indiceActual = siguienteIndice;
+                clearInterval(gameState.intervalo);
+                alert("¡Has recorrido todas las palabras disponibles! Cambio de turno.");
+                finalizarTurno();
+            } else {
+                // No la ha visto: la registramos y avanzamos
+                gameState.palabrasVistasEsteTurno.push(proximaPalabra);
+                gameState.indiceActual = siguienteIndice;
+                renderizarInterfazTurno();
+            }
+        }
+
+        function finalizarTurno() {
+            clearInterval(gameState.intervalo);
+
+            const nombreEquipo = gameState.equipoActual === 1 ? "Equipo Azul" : "Equipo Rojo";
+            alert(`¡Tiempo! El ${nombreEquipo} ha sumado ${gameState.puntosTurno} puntos.`);
+
+            // --- EL CAMBIO CLAVE ---
+            // Antes de cambiar de equipo, movemos el índice a la siguiente palabra
+            // Usamos el módulo (%) para que si era la última, vuelva a la primera (0)
+            // Solo avanzamos el índice si el turno terminó por TIEMPO.
+            // Si terminó por "Vuelta al mazo", el índice ya se movió en saltarPalabra.
+            if (gameState.tiempoRestante <= 0 && gameState.palabrasRestantes.length > 0) {
+                gameState.indiceActual = (gameState.indiceActual + 1) % gameState.palabrasRestantes.length;
+            }
+            // -----------------------
+
+            gameState.equipoActual = (gameState.equipoActual === 1) ? 2 : 1;
+            gameState.puntosTurno = 0;
+            prepararTablero();
+        }
+
+        function mostrarFinJuego() {
+            gameBoard.innerHTML = `
+            <div class="col-span-full text-center py-10">
+                <h2 class="text-5xl font-impostor text-acento mb-4">¡FIN DE PARTIDA!</h2>
+                <p class="text-xl mb-8">Habéis completado las 3 rondas.</p>
+                <button onclick="location.reload()" class="bg-gray-700 px-8 py-3 rounded-xl">Volver al inicio</button>
+            </div>
+        `;
+        }
+
+        // EVENTOS PRINCIPALES
+        btnEmpezar.addEventListener('click', iniciarPartida);
+        resetBtn.addEventListener('click', () => location.reload());
+
+    </script>
+    <!--
+    <script type="module">
+        document.getElementById('currentYearFooter').textContent = new Date().getFullYear();
+
+        // =========================================================
+        // INICIO: DOMContentLoaded
+        // =========================================================
+        document.addEventListener('DOMContentLoaded', () => {
+        });
+    </script>
+    -->
+
+
+
+</body>
+
+</html>
