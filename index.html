@@ -48,6 +48,9 @@
         .font-impostor {
             font-family: 'Luckiest Guy', cursive;
             line-height: 1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         /* Sobrescribir las clases de Tailwind con las variables (para el color de acento) */
@@ -75,7 +78,7 @@
             color: var(--color-texto-gris);
         }
 
-        .logo-glow {
+        .item-glow {
             filter: drop-shadow(0 0 8px var(--color-acento));
         }
     </style>
@@ -233,7 +236,7 @@
                     </div>
 
                     <div id="team2-score"
-                        class="flex flex-col border-2 border-red-600 rounded-xl bg-tarjeta overflow-hidden mt-2">
+                        class="flex flex-col border-2 border-red-600 rounded-xl bg-tarjeta overflow-hidden">
                         <div class="bg-red-600 text-white text-[10px] font-bold py-1 text-center uppercase">🔴 Equipo
                             Rojo</div>
                         <div class="grid grid-cols-3 text-center border-b border-gray-700">
@@ -256,17 +259,18 @@
                         </div>
                     </div>
 
+
                     <div id="timer-container"
-                        class="flex flex-col justify-center items-center text-acento border-2 border-acento p-2 rounded-xl bg-tarjeta h-24 logo-glow">
+                        class="flex flex-row justify-between items-center text-white border-2 border-gray-600 px-4 rounded-xl bg-tarjeta h-12">
                         <span class="text-[10px] uppercase font-bold tracking-wider">⏱️ Tiempo</span>
-                        <span id="timer" class="font-bold text-3xl">-</span>
+                        <span id="timer" class="font-bold text-xl text-acento ml-2">-</span>
                     </div>
 
                     <div id="turn-container"
-                        class="flex flex-col justify-center items-center text-white border-2 border-gray-600 p-2 rounded-xl bg-tarjeta h-24">
+                        class="flex flex-row justify-between items-center text-white border-2 border-gray-600 px-4 rounded-xl bg-tarjeta h-12">
                         <span class="text-[10px] uppercase font-bold tracking-wider">👤 Turno</span>
                         <span id="current-turn"
-                            class="font-bold text-xs leading-tight mt-1 text-acento text-center uppercase">Preparados</span>
+                            class="font-bold text-[10px] leading-tight text-acento text-right uppercase ml-2">Preparados</span>
                     </div>
                 </div>
 
@@ -323,18 +327,13 @@
             tiempoRestante: 0,
             rondaActual: 1,
             indiceActual: 0,
-            indiceInicialSalto: -1,
-            puntosTurno: 0,
-            puntos: 0,
-            intervalo: null,
             puntos: {
                 equipo1: { r1: 0, r2: 0, r3: 0, total: 0 },
                 equipo2: { r1: 0, r2: 0, r3: 0, total: 0 }
             },
-            equipoActual: 1, // 1 para Azules, 2 para Rojos
-            puntosTurno: 0,   // Puntos conseguidos solo en este turno (para el resumen)
-            palabraInicialTurno: null,
-            palabraReferenciaSalto: null,
+            equipoActual: 1,
+            puntosTurno: 0,
+            palabrasSaltadasEsteTurno: [] // <--- AÑADIR ESTA LÍNEA
         };
 
         // 3. ELEMENTOS DEL DOM
@@ -392,15 +391,13 @@
         function prepararTablero() {
             clearInterval(gameState.intervalo);
 
-            // Actualizar el indicador de turno visualmente antes de empezar
-            const nombreEquipo = gameState.equipoActual === 1 ? "🔵 EQUIPO AZUL" : "🔴 EQUIPO ROJO";
+            const nombreEquipo = gameState.equipoActual === 1 ? "🔵 AZUL" : "🔴 ROJO";
             const colorEquipo = gameState.equipoActual === 1 ? "text-blue-400" : "text-red-400";
 
             const turnEl = document.getElementById('current-turn');
             turnEl.textContent = nombreEquipo;
-            turnEl.className = `font-bold text-xs leading-tight mt-1 text-center uppercase ${colorEquipo}`;
+            turnEl.className = `font-bold text-[10px] leading-tight text-right uppercase ${colorEquipo}`;
 
-            // Si no quedan palabras, pasamos de ronda
             if (gameState.palabrasRestantes.length === 0) {
                 gameState.rondaActual++;
                 if (gameState.rondaActual > 3) {
@@ -408,24 +405,32 @@
                     return;
                 }
                 gameState.palabrasRestantes = barajar([...gameState.mazoTotal]);
-                gameState.indiceActual = 0; // Solo reseteamos aquí al cambiar de ronda
+                gameState.indiceActual = 0;
             }
 
             gameBoard.innerHTML = `
-            <div class="col-span-full text-center py-10 bg-tarjeta rounded-3xl border-2 border-dashed border-gray-700">
-                <h2 class="text-4xl font-impostor text-acento mb-2">Ronda ${gameState.rondaActual}</h2>
-                <p class="text-texto-gris mb-8">
+        <div class="col-span-full flex flex-col items-center w-full px-2">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-impostor text-acento">Ronda ${gameState.rondaActual}</h2>
+                <p class="text-xs text-texto-gris uppercase tracking-widest">
                     ${obtenerInstruccionesRonda()}
                 </p>
-                <div class="mb-8">
-                    <span class="text-sm text-texto-gris">Palabras en el mazo:</span>
-                    <span class="text-2xl font-bold block">${gameState.palabrasRestantes.length}</span>
+            </div>
+
+            <div class="w-full max-w-2xl bg-acento p-1 rounded-2xl shadow-[0_0_30px_rgba(30,200,197,0.2)]">
+                <div id="word-display-area" class="bg-gray-900 rounded-xl px-4 text-center flex flex-col items-center justify-center h-[220px]">
+                    <span class="text-sm text-texto-gris uppercase mb-1">Palabras en el mazo:</span>
+                    <span class="text-6xl font-bold text-white leading-none">${gameState.palabrasRestantes.length}</span>
                 </div>
-                <button id="ready-btn" class="bg-acento text-gray-900 font-extrabold py-4 px-10 rounded-full text-2xl hover:scale-105 transition transform logo-glow">
-                    ¡EMPEZAR TURNO!
+            </div>
+
+            <div id="setup-controls" class="flex justify-center w-full mt-10">
+                <button id="ready-btn" class="bg-[--color-acento] text-gray-900 px-12 py-4 rounded-xl font-bold hover:scale-105 transition shadow-lg shadow-green-500/20 uppercase text-base item-glow">
+                    ¡Empezar Turno!
                 </button>
             </div>
-        `;
+        </div>
+    `;
 
             document.getElementById('ready-btn').onclick = empezarTurno;
         }
@@ -443,11 +448,8 @@
         // 7. EL TURNO ACTIVO
         function empezarTurno() {
             gameState.tiempoRestante = gameState.tiempoConfigurado;
-
-            // Al empezar turno, la primera palabra que ve ya cuenta como "vista"
-            gameState.palabrasVistasEsteTurno = [gameState.palabrasRestantes[gameState.indiceActual]];
-
-            console.log(gameState.palabrasRestantes)
+            gameState.puntosTurno = 0;
+            gameState.palabrasSaltadasEsteTurno = []; // Limpiamos saltos del turno anterior
 
             renderizarInterfazTurno();
 
@@ -457,27 +459,40 @@
                 if (timerEl) timerEl.textContent = `${gameState.tiempoRestante}s`;
                 if (gameState.tiempoRestante <= 0) finalizarTurno();
             }, 1000);
+
+            console.log(gameState.palabrasRestantes)
+
         }
 
         function renderizarInterfazTurno() {
             const palabra = gameState.palabrasRestantes[gameState.indiceActual];
+            const displayArea = document.getElementById('word-display-area');
 
-            // Ya NO incluimos el div #timer aquí, solo la carta y botones
-            gameBoard.innerHTML = `
-        <div class="col-span-full flex flex-col items-center">
-            <div class="w-full max-w-sm bg-acento p-1 rounded-2xl shadow-[0_0_20px_rgba(30,200,197,0.3)] mt-4">
-                <div class="bg-gray-900 rounded-xl p-12 text-center">
-                    <span class="text-4xl font-impostor text-white tracking-widest uppercase">
-                        ${palabra}
-                    </span>
-                </div>
-            </div>
-            <div class="flex space-x-4 mt-10">
-                <button id="skip-btn" class="bg-red-500/20 text-red-400 border-2 border-red-500/50 px-8 py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition uppercase text-sm">Saltar</button>
-                <button id="correct-btn" class="bg-green-500 text-gray-900 px-10 py-3 rounded-xl font-bold hover:scale-105 transition shadow-lg shadow-green-500/20 uppercase text-sm">¡Acierto!</button>
-            </div>
+            displayArea.innerHTML = `
+        <span class="text-4xl md:text-6xl font-impostor text-white tracking-widest uppercase break-words leading-tight">
+            ${palabra}
+        </span>
+    `;
+
+            const setupControls = document.getElementById('setup-controls');
+            if (setupControls) setupControls.remove();
+
+            const container = displayArea.closest('.col-span-full');
+            const oldButtons = document.getElementById('action-buttons');
+            if (oldButtons) oldButtons.remove();
+
+            const buttonHTML = `
+        <div id="action-buttons" class="flex space-x-6 mt-10">
+            <button id="skip-btn" class="bg-red-500/20 text-red-400 border-2 border-red-500/50 px-10 py-4 rounded-xl font-bold hover:bg-red-500 hover:text-white transition uppercase text-base">
+                Saltar
+            </button>
+            <button id="correct-btn" class="bg-green-500 text-gray-900 px-12 py-4 rounded-xl font-bold hover:scale-105 transition shadow-lg shadow-green-500/20 uppercase text-base">
+                ¡Acierto!
+            </button>
         </div>
     `;
+
+            container.insertAdjacentHTML('beforeend', buttonHTML);
 
             document.getElementById('correct-btn').onclick = marcarAcierto;
             document.getElementById('skip-btn').onclick = saltarPalabra;
@@ -485,6 +500,7 @@
 
         function marcarAcierto() {
             gameState.puntosTurno++;
+
             const equipoKey = gameState.equipoActual === 1 ? 'equipo1' : 'equipo2';
             const equipoPrefix = gameState.equipoActual === 1 ? 't1' : 't2';
             const rondaKey = `r${gameState.rondaActual}`;
@@ -494,62 +510,74 @@
             document.getElementById(`${equipoPrefix}-${rondaKey}`).textContent = gameState.puntos[equipoKey][rondaKey];
             document.getElementById(`${equipoPrefix}-total`).textContent = gameState.puntos[equipoKey].total;
 
-            // Quitamos la palabra acertada
+            // Quitamos la palabra acertada del mazo
             gameState.palabrasRestantes.splice(gameState.indiceActual, 1);
 
             if (gameState.palabrasRestantes.length === 0) {
                 finalizarTurno();
             } else {
+                // Ajustamos el índice si borramos la última palabra de la lista
                 if (gameState.indiceActual >= gameState.palabrasRestantes.length) {
                     gameState.indiceActual = 0;
                 }
 
-                // IMPORTANTE: NO reseteamos la vuelta al mazo.
-                // Simplemente añadimos la nueva palabra que aparece a la lista de "vistas"
-                const nuevaPalabraEnPantalla = gameState.palabrasRestantes[gameState.indiceActual];
-                gameState.palabrasVistasEsteTurno.push(nuevaPalabraEnPantalla);
-
-                renderizarInterfazTurno();
+                // Comprobamos si la palabra que queda tras el acierto ya estaba saltada
+                const palabraNueva = gameState.palabrasRestantes[gameState.indiceActual];
+                if (gameState.palabrasSaltadasEsteTurno.includes(palabraNueva)) {
+                    clearInterval(gameState.intervalo);
+                    alert("Ya no quedan más palabras por jugar en este turno.");
+                    finalizarTurno();
+                } else {
+                    renderizarInterfazTurno();
+                }
             }
+
+            console.log(gameState.puntosTurno)
         }
 
         function saltarPalabra() {
+            // 1. Marcamos la palabra actual como saltada
+            const palabraActual = gameState.palabrasRestantes[gameState.indiceActual];
+            if (!gameState.palabrasSaltadasEsteTurno.includes(palabraActual)) {
+                gameState.palabrasSaltadasEsteTurno.push(palabraActual);
+            }
+
+            // 2. Buscamos la siguiente palabra que NO esté en la lista de saltadas
             let siguienteIndice = (gameState.indiceActual + 1) % gameState.palabrasRestantes.length;
             let proximaPalabra = gameState.palabrasRestantes[siguienteIndice];
 
-            // ¿Esta palabra ya pasó por la pantalla en este turno?
-            if (gameState.palabrasVistasEsteTurno.includes(proximaPalabra)) {
-                // Detenemos antes de mostrarla
-                gameState.indiceActual = siguienteIndice;
+            // 3. Si la siguiente ya está saltada, significa que hemos recorrido todo lo disponible
+            if (gameState.palabrasSaltadasEsteTurno.includes(proximaPalabra)) {
                 clearInterval(gameState.intervalo);
-                alert("¡Has recorrido todas las palabras disponibles! Cambio de turno.");
+                alert("¡Has recorrido todas las palabras! No quedan más palabras nuevas en este turno.");
                 finalizarTurno();
             } else {
-                // No la ha visto: la registramos y avanzamos
-                gameState.palabrasVistasEsteTurno.push(proximaPalabra);
+                // Si no está saltada, avanzamos normal
                 gameState.indiceActual = siguienteIndice;
                 renderizarInterfazTurno();
             }
+
+            console.log(gameState.puntosTurno)
         }
 
         function finalizarTurno() {
+            console.log(gameState.puntosTurno)
+
             clearInterval(gameState.intervalo);
 
             const nombreEquipo = gameState.equipoActual === 1 ? "Equipo Azul" : "Equipo Rojo";
             alert(`¡Tiempo! El ${nombreEquipo} ha sumado ${gameState.puntosTurno} puntos.`);
 
-            // --- EL CAMBIO CLAVE ---
-            // Antes de cambiar de equipo, movemos el índice a la siguiente palabra
-            // Usamos el módulo (%) para que si era la última, vuelva a la primera (0)
-            // Solo avanzamos el índice si el turno terminó por TIEMPO.
-            // Si terminó por "Vuelta al mazo", el índice ya se movió en saltarPalabra.
             if (gameState.tiempoRestante <= 0 && gameState.palabrasRestantes.length > 0) {
                 gameState.indiceActual = (gameState.indiceActual + 1) % gameState.palabrasRestantes.length;
             }
-            // -----------------------
 
             gameState.equipoActual = (gameState.equipoActual === 1) ? 2 : 1;
             gameState.puntosTurno = 0;
+
+            // IMPORTANTE: Limpiar vistas para el inicio del próximo turno
+            gameState.palabrasVistasEsteTurno = [];
+
             prepararTablero();
         }
 
