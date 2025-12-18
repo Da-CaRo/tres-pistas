@@ -549,6 +549,7 @@
             // 3. Si la siguiente ya está saltada, significa que hemos recorrido todo lo disponible
             if (gameState.palabrasSaltadasEsteTurno.includes(proximaPalabra)) {
                 clearInterval(gameState.intervalo);
+                gameState.indiceActual = siguienteIndice;
                 alert("¡Has recorrido todas las palabras! No quedan más palabras nuevas en este turno.");
                 finalizarTurno();
             } else {
