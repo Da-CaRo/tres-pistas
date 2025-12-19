@@ -385,6 +385,7 @@
             };
 
             prepararTablero();
+            guardarEnStorage()
         }
 
         // 6. PANTALLA DE PREPARACIÓN
@@ -513,6 +514,8 @@
             // Quitamos la palabra acertada del mazo
             gameState.palabrasRestantes.splice(gameState.indiceActual, 1);
 
+            guardarEnStorage()
+
             if (gameState.palabrasRestantes.length === 0) {
                 finalizarTurno();
             } else {
@@ -541,6 +544,8 @@
             if (!gameState.palabrasSaltadasEsteTurno.includes(palabraActual)) {
                 gameState.palabrasSaltadasEsteTurno.push(palabraActual);
             }
+
+            guardarEnStorage()
 
             // 2. Buscamos la siguiente palabra que NO esté en la lista de saltadas
             let siguienteIndice = (gameState.indiceActual + 1) % gameState.palabrasRestantes.length;
@@ -574,6 +579,7 @@
             }
 
             gameState.equipoActual = (gameState.equipoActual === 1) ? 2 : 1;
+            guardarEnStorage()
             gameState.puntosTurno = 0;
 
             // IMPORTANTE: Limpiar vistas para el inicio del próximo turno
@@ -590,11 +596,67 @@
                 <button onclick="location.reload()" class="bg-gray-700 px-8 py-3 rounded-xl">Volver al inicio</button>
             </div>
         `;
+            limpiarStorage();
+        }
+
+        // Guarda el estado actual en LocalStorage
+        function guardarEnStorage() {
+            localStorage.setItem('tresPistas_gameState', JSON.stringify(gameState));
+        }
+
+        // Carga el estado si existe
+        function cargarDesdeStorage() {
+            const guardado = localStorage.getItem('tresPistas_gameState');
+            if (guardado) {
+                gameState = JSON.parse(guardado);
+                return true;
+            }
+            return false;
+        }
+
+        // Limpia el storage al finalizar o salir
+        function limpiarStorage() {
+            localStorage.removeItem('tresPistas_gameState');
+        }
+
+        // Utilidad para refrescar todos los marcadores tras cargar
+        function actualizarInterfazCompleta() {
+            ['t1', 't2'].forEach(team => {
+                const eq = team === 't1' ? 'equipo1' : 'equipo2';
+                ['r1', 'r2', 'r3', 'total'].forEach(score => {
+                    document.getElementById(`${team}-${score}`).textContent = gameState.puntos[eq][score];
+                });
+            });
         }
 
         // EVENTOS PRINCIPALES
+
+        // Al cargar la página, comprobar si hay partida guardada
+        if (cargarDesdeStorage()) {
+            // Si hay partida, saltamos la configuración y vamos al tablero
+            startSection.classList.add('hidden');
+            gameLayout.classList.remove('hidden');
+            resetBtn.classList.remove('hidden');
+            gameStats.classList.remove('hidden');
+
+            // Actualizamos los marcadores visuales con los datos cargados
+            actualizarInterfazCompleta();
+            prepararTablero();
+        }
+
         btnEmpezar.addEventListener('click', iniciarPartida);
-        resetBtn.addEventListener('click', () => location.reload());
+        resetBtn.addEventListener('click', () => {
+            if (confirm("¿Seguro que quieres borrar el progreso y salir?")) {
+                limpiarStorage();
+                location.reload();
+            }
+        });
+
+        document.getElementById('clear-storage-btn').addEventListener('click', () => {
+            limpiarStorage();
+            alert("Memoria limpiada. La página se recargará.");
+            location.reload();
+        });
 
     </script>
     <!--
