@@ -355,8 +355,21 @@
             const numCartas = parseInt(document.getElementById('num-card-select').value);
             gameState.tiempoConfigurado = parseInt(document.getElementById('time-select').value);
 
+            // 1. Filtrar palabras que NO han sido usadas
+            const palabrasUsadas = obtenerPalabrasUsadas();
+            let palabrasDisponibles = BANCO_PALABRAS.filter(p => !palabrasUsadas.includes(p));
+
+            // 2. Si no hay suficientes palabras nuevas, reiniciamos el historial
+            if (palabrasDisponibles.length < numCartas) {
+                resetearHistorialPalabras();
+                palabrasDisponibles = [...BANCO_PALABRAS];
+            }
+
+            // 3. Seleccionar del mazo de disponibles
+            const seleccionadas = barajar(palabrasDisponibles).slice(0, numCartas);
+            seleccionadas.forEach(palabra => registrarPalabraUsada(palabra));
+
             // Seleccionamos y barajamos SOLO AQUÍ para la primera ronda
-            const seleccionadas = barajar([...BANCO_PALABRAS]).slice(0, numCartas);
             gameState.mazoTotal = [...seleccionadas];
             gameState.palabrasRestantes = [...seleccionadas]; // Ya vienen barajadas
 
@@ -627,6 +640,27 @@
                     document.getElementById(`${team}-${score}`).textContent = gameState.puntos[eq][score];
                 });
             });
+        }
+
+        // Obtiene la lista de palabras ya usadas del storage
+        function obtenerPalabrasUsadas() {
+            const usadas = localStorage.getItem('tresPistas_usadas');
+            return usadas ? JSON.parse(usadas) : [];
+        }
+
+        // Guarda una nueva palabra en la lista de usadas
+        function registrarPalabraUsada(palabra) {
+            let usadas = obtenerPalabrasUsadas();
+            if (!usadas.includes(palabra)) {
+                usadas.push(palabra);
+                localStorage.setItem('tresPistas_usadas', JSON.stringify(usadas));
+            }
+        }
+
+        // Limpia el historial de palabras (para cuando se agoten todas)
+        function resetearHistorialPalabras() {
+            localStorage.removeItem('tresPistas_usadas');
+            alert("¡Se han usado todas las palabras disponibles! El historial se ha reiniciado.");
         }
 
         // EVENTOS PRINCIPALES
