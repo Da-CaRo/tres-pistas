@@ -310,13 +310,73 @@
         document.getElementById('currentYearFooter').textContent = new Date().getFullYear();
 
         // 1. BANCO DE PALABRAS AMPLIADO
-        const BANCO_PALABRAS = [
-            "Messi", "Iron Man", "Pizza", "Eiffel", "Titanic", "Batman", "Shakira",
-            "Japón", "Internet", "Harry Potter", "Dinosaurio", "Minecraft", "Star Wars",
-            "WhatsApp", "Facebook", "España", "Don Quijote", "Mickey Mouse", "Einstein",
-            "Beyoncé", "Pikachu", "Netflix", "Google", "Amazon", "Mónaco", "Sherlock",
-            "Maradona", "Cleopatra", "Dalí", "Elvis Presley", "Spiderman", "Grecia",
-            "Canguro", "Sándwich", "Pirámide", "Bombilla", "Guitarra", "Marte"
+        export const BANCO_PALABRAS = [
+            // --- DEPORTES ---
+            "Rafa Nadal", "Fernando Alonso", "Iker Casillas", "Cristiano Ronaldo", "Leo Messi",
+            "Roger Federer", "Maradona", "Michael Jordan", "Serena Williams", "Pau Gasol",
+            "Simone Biles", "Usain Bolt", "Tiger Woods", "Michael Phelps", "Luis Aragonés",
+
+            // --- MÚSICA Y ARTE ---
+            "Alejandro Sanz", "Madonna", "John Lennon", "Michael Jackson", "Beyoncé",
+            "Beethoven", "Vincent van Gogh", "Pablo Picasso", "Salvador Dalí", "Edith Piaf",
+            "Freddie Mercury", "Rosalía", "Shakira", "Elvis Presley", "Lola Flores",
+            "David Bowie", "Frida Kahlo", "Mozart", "Taylor Swift", "Bad Bunny",
+
+            // --- CINE Y TV ---
+            "Brad Pitt", "Marilyn Monroe", "Tom Hanks", "Pamela Anderson", "Jesús Vázquez",
+            "Belén Esteban", "Risto Mejide", "Ana Rosa Quintana", "Penélope Cruz", "Will Smith",
+            "Santiago Segura", "Julia Roberts", "Harrison Ford", "Ursula Corberó", "Mario Casas",
+
+            // --- HISTORIA Y CIENCIA ---
+            "Albert Einstein", "Marie Curie", "Napoleón Bonaparte", "Barack Obama",
+            "Cleopatra", "Cristóbal Colón", "Steve Jobs", "Bill Gates", "Isaac Newton",
+            "Leonardo da Vinci", "Julio César", "Nelson Mandela", "Stephen Hawking", "Ada Lovelace",
+
+            // --- PERSONAJES FICTICIOS ---
+            "Superman", "Spiderman", "Batman", "Harry Potter", "Jon Nieve", "Sherlock Holmes",
+            "Mickey Mouse", "Bugs Bunny", "Snoopy", "Pikachu", "Papá Pitufo", "Iron Man",
+            "Hulk", "Luffy", "Goku", "Darth Vader", "Elsa de Frozen", "Capitán América",
+
+            // --- CULTURA POP Y MEMES ---
+            "Ibai Llanos", "Auronplay", "TheGrefg", "Kim Kardashian", "Elon Musk",
+            "El Risitas", "La Rosalía", "Paquita Salas", "Chiquito de la Calzada",
+
+            // --- CONCEPTOS Y TÍTULOS (Dificultad Media/Alta) ---
+            "Titanic", "Star Wars", "Jurassic Park", "El Padrino", "Avatar", "La Casa de Papel",
+            "E.T.", "Casablanca", "Psicosis", "Don Quijote", "Sancho Panza", "Mortadelo",
+            "Filemón", "El Cid", "Antonio Alcántara", "Manolo Escobar",
+
+            // --- LUGARES Y MONUMENTOS ---
+            "Torre Eiffel", "La Alhambra", "Estatua de la Libertad", "Coliseo Romano",
+            "Muralla China", "Machu Picchu", "Pirámides de Giza", "Sagrada Familia", "Big Ben",
+
+            // --- OBJETOS Y CONCEPTOS (Ideales para Mímica) ---
+            "Despertador", "Sacapuntas", "Gravedad", "Internet", "WhatsApp", "Facebook",
+            "Netflix", "Google", "Amazon", "Instagram", "TikTok", "Sándwich", "Bombilla",
+
+            // --- CINE Y SERIES ACTUALES ---
+            "Wednesday Addams", "Baby Yoda", "Indiana Jones", "Jack Sparrow", "Maléfica",
+            "Walter White", "Eleven (Stranger Things)", "Barbie", "Oppenheimer", "Spider-Gwen",
+
+            // --- MÚSICA Y ESPECTÁCULO ---
+            "Billie Eilish", "Harry Styles", "Lady Gaga", "Luis Miguel", "Raffaella Carrà",
+            "C. Tangana", "Dua Lipa", "Kurt Cobain", "Amy Winehouse", "Ed Sheeran",
+
+            // --- DEPORTES Y AVENTURA ---
+            "Carlos Alcaraz", "Alexia Putellas", "Marc Márquez", "Fernando Hierro", "Pelé",
+            "Kobe Bryant", "Neil Armstrong", "Amelia Earhart", "Marco Polo", "Edmund Hillary",
+
+            // --- HISTORIA, CIENCIA Y LITERATURA ---
+            "Aristóteles", "Julio Verne", "Agatha Christie", "Virginia Woolf", "Charles Darwin",
+            "Galileo Galilei", "Confucio", "Juana de Arco", "Mahatma Gandhi", "Malala Yousafzai",
+
+            // --- GASTRONOMÍA Y OBJETOS (Divertidos para mímica) ---
+            "Paella", "Sushi", "Taco", "Croissant", "Espaguetis",
+            "Ducha", "Cámara de fotos", "Telescopio", "Dron", "Realidad Virtual",
+
+            // --- NATURALEZA Y VARIOS ---
+            "Pingüino", "Orquídea", "Tsunami", "Eclipse", "Aurora Boreal",
+            "Ajedrez", "Cubo de Rubik", "TikToker", "Podcaster", "Inteligencia Artificial"
         ];
 
         // 2. ESTADO DEL JUEGO MEJORADO
