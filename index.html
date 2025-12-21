@@ -121,7 +121,7 @@
                                 <span class="text-acento text-4xl block">⚙️</span>
                                 <h3 class="text-4xl font-bold">Opciones</h3>
                             </div>
-                            <p class="text-texto-gris text-base">
+                            <p class="text-tarjeta text-base">
                             <div class="flex flex-col space-y-2 mb-4">
 
                                 <select id="time-select"
@@ -166,15 +166,15 @@
                             Azul</div>
                         <div class="grid grid-cols-3 text-center border-b border-gray-700">
                             <div class="p-1 border-r border-gray-700">
-                                <span class="block text-[8px] text-texto-gris uppercase">R1</span>
+                                <span class="block text-[8px] text-tarjeta uppercase">R1</span>
                                 <span id="t1-r1" class="font-bold text-sm text-white">0</span>
                             </div>
                             <div class="p-1 border-r border-gray-700">
-                                <span class="block text-[8px] text-texto-gris uppercase">R2</span>
+                                <span class="block text-[8px] text-tarjeta uppercase">R2</span>
                                 <span id="t1-r2" class="font-bold text-sm text-white">0</span>
                             </div>
                             <div class="p-1">
-                                <span class="block text-[8px] text-texto-gris uppercase">R3</span>
+                                <span class="block text-[8px] text-tarjeta uppercase">R3</span>
                                 <span id="t1-r3" class="font-bold text-sm text-white">0</span>
                             </div>
                         </div>
@@ -190,15 +190,15 @@
                             Rojo</div>
                         <div class="grid grid-cols-3 text-center border-b border-gray-700">
                             <div class="p-1 border-r border-gray-700">
-                                <span class="block text-[8px] text-texto-gris uppercase">R1</span>
+                                <span class="block text-[8px] text-tarjeta uppercase">R1</span>
                                 <span id="t2-r1" class="font-bold text-sm text-white">0</span>
                             </div>
                             <div class="p-1 border-r border-gray-700">
-                                <span class="block text-[8px] text-texto-gris uppercase">R2</span>
+                                <span class="block text-[8px] text-tarjeta uppercase">R2</span>
                                 <span id="t2-r2" class="font-bold text-sm text-white">0</span>
                             </div>
                             <div class="p-1">
-                                <span class="block text-[8px] text-texto-gris uppercase">R3</span>
+                                <span class="block text-[8px] text-tarjeta uppercase">R3</span>
                                 <span id="t2-r3" class="font-bold text-sm text-white">0</span>
                             </div>
                         </div>
@@ -442,14 +442,14 @@
         <div class="col-span-full flex flex-col items-center w-full px-2">
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-tres-pistas text-acento">Ronda ${gameState.rondaActual}</h2>
-                <p class="text-xs text-texto-gris uppercase tracking-widest">
+                <p class="text-xs text-tarjeta uppercase tracking-widest">
                     ${obtenerInstruccionesRonda()}
                 </p>
             </div>
 
             <div class="w-full max-w-2xl bg-acento p-1 rounded-2xl shadow-[0_0_30px_rgba(30,200,197,0.2)]">
                 <div id="word-display-area" class="bg-gray-900 rounded-xl px-4 text-center flex flex-col items-center justify-center h-[220px]">
-                    <span class="text-sm text-texto-gris uppercase mb-1">Palabras en el mazo:</span>
+                    <span class="text-sm text-tarjeta uppercase mb-1">Palabras en el mazo:</span>
                     <span class="text-6xl font-bold text-white leading-none">${gameState.palabrasRestantes.length}</span>
                 </div>
             </div>
@@ -511,11 +511,16 @@
             const oldButtons = document.getElementById('action-buttons');
             if (oldButtons) oldButtons.remove();
 
+            // NUEVA LÓGICA: Solo incluimos el botón de saltar si NO es la Ronda 1
+            const skipButtonHTML = gameState.rondaActual !== 1
+                ? `<button id="skip-btn" class="bg-red-500/20 text-red-400 border-2 border-red-500/50 px-10 py-4 rounded-xl font-bold hover:bg-red-500 hover:text-white transition uppercase text-base">
+                Saltar
+           </button>`
+                : '';
+
             const buttonHTML = `
         <div id="action-buttons" class="flex space-x-6 mt-10">
-            <button id="skip-btn" class="bg-red-500/20 text-red-400 border-2 border-red-500/50 px-10 py-4 rounded-xl font-bold hover:bg-red-500 hover:text-white transition uppercase text-base">
-                Saltar
-            </button>
+            ${skipButtonHTML}
             <button id="correct-btn" class="bg-green-500 text-gray-900 px-12 py-4 rounded-xl font-bold hover:scale-105 transition shadow-lg shadow-green-500/20 uppercase text-base">
                 ¡Acierto!
             </button>
@@ -525,7 +530,12 @@
             container.insertAdjacentHTML('beforeend', buttonHTML);
 
             document.getElementById('correct-btn').onclick = marcarAcierto;
-            document.getElementById('skip-btn').onclick = saltarPalabra;
+
+            // Solo asignamos el evento si el botón existe
+            const skipBtn = document.getElementById('skip-btn');
+            if (skipBtn) {
+                skipBtn.onclick = saltarPalabra;
+            }
         }
 
         function marcarAcierto() {
